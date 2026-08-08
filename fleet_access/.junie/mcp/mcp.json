@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/olaoluwa/Library/Application Support/Herd/bin/php84",
+            "args": [
+                "/Users/olaoluwa/PhpstormProjects/load_tracker/fleet_access/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FleetPro - Add New Asset</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "on-background": "#111c2d",
+                      "surface-bright": "#f9f9ff",
+                      "secondary-container": "#d0e1fb",
+                      "surface-variant": "#d8e3fb",
+                      "on-surface-variant": "#434655",
+                      "background": "#f9f9ff",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "tertiary": "#525657",
+                      "surface-dim": "#cfdaf2",
+                      "primary-container": "#2563eb",
+                      "surface-container-low": "#f0f3ff",
+                      "on-secondary-fixed": "#0b1c30",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed": "#00174b",
+                      "surface-tint": "#0053db",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#54647a",
+                      "primary-fixed": "#dbe1ff",
+                      "tertiary-fixed": "#e0e3e5",
+                      "tertiary-fixed-dim": "#c4c7c9",
+                      "surface-container-highest": "#d8e3fb",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#eeefff",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "on-tertiary-fixed": "#191c1e",
+                      "surface": "#f9f9ff",
+                      "outline-variant": "#c3c6d7",
+                      "surface-container": "#e7eeff",
+                      "secondary": "#505f76",
+                      "error": "#ba1a1a",
+                      "outline": "#737686",
+                      "inverse-surface": "#263143",
+                      "inverse-on-surface": "#ecf1ff",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#444749",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed": "#d3e4fe",
+                      "inverse-primary": "#b4c5ff",
+                      "on-tertiary-container": "#eff1f3",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#6b6e70",
+                      "on-surface": "#111c2d",
+                      "primary": "#004ac6",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "surface-container-high": "#dee8ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin": "24px",
+                      "xl": "32px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "gutter": "16px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "data-mono": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #f9f9ff; color: #111c2d; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .shadow-soft { box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05), 0px 1px 2px rgba(0, 0, 0, 0.03); }
+        
+        /* Custom Input Styles */
+        .fleet-input {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #c3c6d7;
+            border-radius: 0.5rem;
+            padding: 10px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #111c2d;
+            transition: all 0.2s ease;
+        }
+        .fleet-input:focus {
+            outline: none;
+            border-color: #004ac6;
+            box-shadow: 0 0 0 3px rgba(0, 74, 198, 0.1);
+        }
+        .fleet-label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #434655;
+            margin-bottom: 4px;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased font-body-md text-body-md">
+<!-- SideNavBar (Shared Component) -->
+<nav class="hidden md:flex w-[260px] h-screen fixed left-0 top-0 bg-surface-container-low dark:bg-on-background border-r border-outline-variant flex-col h-full py-md px-sm transition-all duration-200 ease-in-out z-40">
+<!-- Header -->
+<div class="flex items-center gap-3 px-3 mb-8 mt-2">
+<div class="w-10 h-10 rounded bg-primary text-on-primary flex items-center justify-center font-bold text-lg">
+                F
+            </div>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-black text-on-surface dark:text-on-primary-fixed leading-tight tracking-tight">FleetManager</h1>
+<p class="text-xs text-on-surface-variant">Enterprise Logistics</p>
+</div>
+</div>
+<!-- Main Nav Tabs -->
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary dark:text-primary-fixed-dim bg-secondary-container dark:bg-on-secondary-fixed-variant font-bold font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+                Live Assets
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+                Alerts
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">map</span>
+                Geofences
+            </a>
+</div>
+<!-- Footer Nav Tabs -->
+<div class="mt-auto space-y-1 pt-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                Support
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[260px] flex flex-col h-screen relative bg-surface">
+<!-- TopNavBar (Shared Component - Mobile/Desktop) -->
+<header class="w-full h-16 sticky top-0 z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-on-surface-variant shadow-sm flex justify-between items-center px-lg w-full">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="hidden md:flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<a class="hover:text-primary transition-colors" href="#">Live Assets</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-on-surface font-medium">Add New Asset</span>
+</div>
+<!-- Mobile Logo -->
+<h2 class="md:hidden text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">FleetPro</h2>
+</div>
+<!-- Search (on_left per JSON, but pushed to flex center/right for balance if needed, keeping literal to JSON requested structure) -->
+<div class="hidden lg:flex items-center bg-surface-container-low rounded-full px-4 py-1.5 border border-outline-variant w-64 mr-auto ml-8">
+<span class="material-symbols-outlined text-on-surface-variant mr-2 text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm p-0 w-full placeholder-on-surface-variant" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container overflow-hidden border border-outline-variant ml-2">
+<img alt="Manager Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a female logistics manager in her 30s, wearing a crisp light blue shirt in a bright, modern office setting. High key lighting, clean corporate aesthetic, shot on a 50mm lens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYEFc_Qh6g204NiAqkt_5kT48uR4ncgmMPUNvLuTeA1wT8gn64nBuKRhkvGN0_zIRhHyl3z55f1iDsncbSynXi0Wg2wGEzCVTD71zQYzM1u5SrOT-V_xp0skeFL_MwL3zUTMKxef_QpZC58zRBfqfFh-vMnsGK-Py5PeFL035131_NemLvUzAYlLMOIPe3856E_2xoa92lAuZXw30LEOjhRjYH2MWJXpCgv8gbI0-1WwLUQzcZ_TN9"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-4 md:p-margin">
+<div class="max-w-6xl mx-auto">
+<!-- Page Header -->
+<div class="mb-lg">
+<h2 class="text-display font-display text-on-surface mb-2">Initialize New Asset</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Register a new vehicle and map it to an active GPS tracking device.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Form Column -->
+<div class="lg:col-span-7 xl:col-span-8 space-y-6">
+<!-- Section 1: Asset Details -->
+<div class="bg-surface-container-lowest rounded-xl p-md md:p-lg shadow-soft border border-outline-variant">
+<div class="flex items-center gap-3 mb-6 border-b border-surface-variant pb-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">1. Asset Identity</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="md:col-span-2">
+<label class="fleet-label">Asset Name / ID</label>
+<input class="fleet-input" placeholder="e.g. TRK-9000" type="text" value="TRK-"/>
+</div>
+<div>
+<label class="fleet-label">Vehicle Make &amp; Model</label>
+<input class="fleet-input" placeholder="e.g. Volvo FH16" type="text"/>
+</div>
+<div>
+<label class="fleet-label">Year</label>
+<select class="fleet-input text-on-surface-variant">
+<option>2024</option>
+<option selected="">2023</option>
+<option>2022</option>
+<option>2021</option>
+</select>
+</div>
+<div class="md:col-span-2">
+<label class="fleet-label">VIN (Vehicle Identification Number)</label>
+<input class="fleet-input font-data-mono uppercase" placeholder="17-character VIN" type="text"/>
+</div>
+</div>
+</div>
+<!-- Section 2: GPS Mapping -->
+<div class="bg-surface-container-lowest rounded-xl p-md md:p-lg shadow-soft border border-outline-variant">
+<div class="flex items-center gap-3 mb-6 border-b border-surface-variant pb-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">satellite_alt</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">2. Telemetry Mapping</h3>
+</div>
+<div class="space-y-4">
+<div>
+<label class="fleet-label">Assign GPS Device</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="fleet-input pl-10" placeholder="Search by IMEI or Serial Number..." type="text" value="DEV-88392-XT"/>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">check_circle</span>
+                                        Device DEV-88392-XT is currently active and unassigned.
+                                    </p>
+</div>
+<div class="grid grid-cols-2 gap-md pt-2">
+<div>
+<label class="fleet-label">Reporting Interval</label>
+<select class="fleet-input">
+<option>10 seconds (High Precision)</option>
+<option selected="">30 seconds (Standard)</option>
+<option>1 minute (Battery Saver)</option>
+</select>
+</div>
+<div>
+<label class="fleet-label">Odometer Offset (km)</label>
+<input class="fleet-input font-data-mono" placeholder="0" type="number"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Initial Status -->
+<div class="bg-surface-container-lowest rounded-xl p-md md:p-lg shadow-soft border border-outline-variant">
+<div class="flex items-center gap-3 mb-6 border-b border-surface-variant pb-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">speed</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">3. Initial Parameters</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div>
+<label class="fleet-label">Max Load Capacity (kg)</label>
+<input class="fleet-input font-data-mono" placeholder="e.g. 24000" type="number"/>
+</div>
+<div>
+<label class="fleet-label">Initial Fuel Level (%)</label>
+<input class="fleet-input font-data-mono" placeholder="e.g. 100" type="number"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Verification & Actions -->
+<div class="lg:col-span-5 xl:col-span-4 space-y-6">
+<!-- Map Preview -->
+<div class="bg-surface-container-lowest rounded-xl shadow-soft border border-outline-variant overflow-hidden flex flex-col h-[400px]">
+<div class="p-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h3 class="text-body-md font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">my_location</span>
+                                    Signal Verification
+                                </h3>
+<span class="bg-[#dcfce7] text-[#166534] text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Strong Signal</span>
+</div>
+<div class="flex-1 relative bg-surface-variant">
+<!-- Simulated Map Image -->
+<img alt="Map Preview" class="w-full h-full object-cover" data-alt="A clean, minimalist digital map interface showing a suburban road layout in light mode. The map uses pale blues and soft grays, with fine line details for streets. A distinct blue location pin with a subtle shadow is placed in the center. Modern GPS software aesthetic." data-location="Dallas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjWkXvJVe1OfY4PywSP88MyGHstZi__ZOMAozObOSkVuxUZc--fkXrv2G83GmZMbDNwKzIe3cbWy9dRiBJEsxzVpTHSBOcyIYKoFye6f6k10Lxq0EaidA4UDfygGbK3W-ugcy3KrEFeDV3OcR8aP25xU7SbmqzfxC-WPKKCQTjNxOHhNBOS95YgZtGnkb4ITUld0Wqcu3KR1cdrz66aOYftd7I0dOhAXcBX-VOHF5I2vnRuNxmX7Vm"/>
+<!-- Floating Data Panel over Map -->
+<div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg border border-outline-variant shadow-sm">
+<div class="flex justify-between items-center mb-1">
+<span class="text-label-md font-label-md text-on-surface-variant">Last Known Position</span>
+<span class="text-xs text-primary font-medium">Just now</span>
+</div>
+<p class="text-body-sm font-data-mono text-on-surface">32.7767° N, 96.7970° W</p>
+<p class="text-xs text-on-surface-variant truncate mt-1">1400 Main St, Dallas, TX 75202</p>
+</div>
+</div>
+</div>
+<!-- Summary Card -->
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant">
+<h4 class="text-label-md font-label-md text-on-surface mb-3 uppercase">Setup Summary</h4>
+<ul class="space-y-2 text-body-sm">
+<li class="flex justify-between">
+<span class="text-on-surface-variant">Status</span>
+<span class="text-primary font-medium">Ready to Pair</span>
+</li>
+<li class="flex justify-between">
+<span class="text-on-surface-variant">Device</span>
+<span class="font-data-mono text-on-surface">DEV-88392-XT</span>
+</li>
+</ul>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-3 mt-8">
+<button class="w-full bg-primary-container text-on-primary h-12 rounded-lg font-headline-md text-body-lg shadow-sm hover:bg-surface-tint transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+                                Start Tracking
+                            </button>
+<button class="w-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant h-12 rounded-lg font-headline-md text-body-lg hover:bg-surface-container-low transition-colors">
+                                Cancel
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Spacer for bottom scroll -->
+<div class="h-16"></div>
+</div>
+</main>
+</body></html>

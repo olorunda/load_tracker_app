@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FleetPro - Live Assets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "on-primary-container": "#eeefff",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#cfdaf2",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#6b6e70",
+                        "secondary": "#505f76",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-background": "#111c2d",
+                        "on-primary-fixed": "#00174b",
+                        "tertiary-fixed": "#e0e3e5",
+                        "on-secondary-fixed": "#0b1c30",
+                        "inverse-primary": "#b4c5ff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-container": "#54647a",
+                        "on-surface": "#111c2d",
+                        "surface": "#f9f9ff",
+                        "on-primary": "#ffffff",
+                        "primary": "#004ac6",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "tertiary": "#525657",
+                        "outline-variant": "#c3c6d7",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container": "#e7eeff",
+                        "surface-container-high": "#dee8ff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-variant": "#d8e3fb",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#263143",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "primary-container": "#2563eb",
+                        "surface-container-low": "#f0f3ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-tertiary-container": "#eff1f3",
+                        "secondary-container": "#d0e1fb",
+                        "outline": "#737686",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#0053db",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "display": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .map-marker {
+            transition: transform 0.2s ease-in-out;
+        }
+        .map-marker:hover {
+            transform: scale(1.1);
+        }
+        /* Hide scrollbar for cleaner look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen w-full flex overflow-hidden font-body-md">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-md px-sm w-[260px] h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant z-40">
+<div class="flex items-center gap-md px-sm mb-xl">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A minimalist and modern logistics company logo featuring a stylized geometric shape in deep blue, suitable for an enterprise fleet management dashboard. Clean background, sharp edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1OSsUjI00PIn7-vKZZd2k1yJ4U00pXjH4hhYRGD-9jc5I9TwBG0CeX6CUSqA2_E6TiD1F5iZMAWRKWLIGBmUmjPBOROQCLZP7BXMv4hA5kL0ux4QTRPmiSvx3TbLHTIrXNJTLCdteucxstpGrsR94Scu_nTcQ7d4crDVpI7-iKunXDbB8inqse1CeHtYEZUFe1vzd2IcPMdMwpfoADKoObgan4IlJul8vmz4QC5k70JeNnHw7lUlU"/>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-black text-on-surface">FleetManager</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Enterprise Logistics</p>
+</div>
+</div>
+<div class="flex flex-col gap-sm flex-1">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="font-label-md text-label-md">Live Assets</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="font-label-md text-label-md">Alerts</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-label-md text-label-md">Geofences</span>
+</a>
+</div>
+<div class="flex flex-col gap-sm mt-auto border-t border-outline-variant pt-md">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[260px] h-full flex flex-col md:flex-row relative">
+<!-- Asset List Panel -->
+<aside class="w-full md:w-[360px] bg-surface-container-lowest h-full border-r border-outline-variant flex flex-col shadow-sm z-10 flex-shrink-0">
+<!-- Search Header -->
+<div class="p-md border-b border-outline-variant bg-surface-container-lowest sticky top-0 z-20">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">Active Fleet</h2>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-xl pr-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow" placeholder="Search by ID or driver..." type="text"/>
+</div>
+<!-- Filters -->
+<div class="flex gap-sm mt-md overflow-x-auto no-scrollbar">
+<button class="px-sm py-xs rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md whitespace-nowrap">All (142)</button>
+<button class="px-sm py-xs rounded-full bg-surface-container-low text-on-surface-variant border border-outline-variant hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap">Loaded (89)</button>
+<button class="px-sm py-xs rounded-full bg-surface-container-low text-on-surface-variant border border-outline-variant hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap">Empty (41)</button>
+<button class="px-sm py-xs rounded-full bg-error-container text-on-error-container border border-error-container hover:opacity-90 font-label-md text-label-md whitespace-nowrap">Alert (12)</button>
+</div>
+</div>
+<!-- List -->
+<div class="flex-1 overflow-y-auto no-scrollbar bg-surface-bright">
+<!-- List Item 1 -->
+<div class="p-md border-b border-surface-variant hover:bg-surface-container-low cursor-pointer transition-colors bg-surface-container-low border-l-4 border-l-primary">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">TRK-9021</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Volvo FH16 - Heavy Transport</span>
+</div>
+<span class="px-2 py-1 rounded-full bg-[#E6F4EA] text-[#137333] font-label-md text-[10px] uppercase tracking-wider">Loaded</span>
+</div>
+<div class="flex items-center gap-md text-body-sm text-on-surface-variant mt-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">speed</span>
+<span class="font-data-mono">68 mph</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">pin_drop</span>
+<span class="truncate w-32">I-80 W, near Omaha</span>
+</div>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="p-md border-b border-surface-variant hover:bg-surface-container-low cursor-pointer transition-colors bg-surface-container-lowest">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">TRK-4432</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Freightliner Cascadia</span>
+</div>
+<span class="px-2 py-1 rounded-full bg-[#F1F3F4] text-[#5F6368] font-label-md text-[10px] uppercase tracking-wider">Empty</span>
+</div>
+<div class="flex items-center gap-md text-body-sm text-on-surface-variant mt-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">speed</span>
+<span class="font-data-mono">0 mph (Parked)</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">pin_drop</span>
+<span class="truncate w-32">Chicago Depot, IL</span>
+</div>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="p-md border-b border-surface-variant hover:bg-surface-container-low cursor-pointer transition-colors bg-surface-container-lowest">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">TRK-7719</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Peterbilt 579</span>
+</div>
+<span class="px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-[10px] uppercase tracking-wider">Maintenance</span>
+</div>
+<div class="flex items-center gap-md text-body-sm text-on-surface-variant mt-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+<span class="font-data-mono text-error">Engine Fault Code</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Map Area -->
+<div class="flex-1 relative bg-[#e5e3df] h-full overflow-hidden">
+<!-- Simulated Map Background -->
+<div class="absolute inset-0 bg-[url('placeholder')] bg-cover bg-center opacity-80 mix-blend-multiply" data-alt="A highly detailed, clean, light-themed vector map background focusing on major highways and logistical routes across a stylized midwestern US region. Soft gray and light beige tones, with subtle blue hues for water bodies. No text labels. Modern minimal cartography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5rgeyljhbSr1r28RjMd78fzYPxCjJ04ImOBAcpFBybcYxJEBTc1YFNWek43nTj8HRa1MlIBLKc2NJwrHicCtz9GqKKz-KR4SW9o6pK-3xtFOZuWjSiH8XhsE-8kP7qIRB91seAiEIJKE7EAYNRz40jcPWqKJsFplw-e4NjXun3eic82v6fQPz_DXsGecsfnIOO-kAi2JULvWNcEILKhaRx8hyiZTu-91YDVigGlx4QufkVbRjkAp0')"></div>
+<!-- Map Overlay Controls -->
+<div class="absolute top-md right-md flex flex-col gap-sm z-20">
+<button class="w-10 h-10 bg-surface-container-lowest rounded-lg shadow-sm flex items-center justify-center text-on-surface hover:bg-surface-container-low border border-outline-variant">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 bg-surface-container-lowest rounded-lg shadow-sm flex items-center justify-center text-on-surface hover:bg-surface-container-low border border-outline-variant">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="w-10 h-10 mt-md bg-surface-container-lowest rounded-lg shadow-sm flex items-center justify-center text-on-surface hover:bg-surface-container-low border border-outline-variant">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+<button class="w-10 h-10 bg-surface-container-lowest rounded-lg shadow-sm flex items-center justify-center text-on-surface hover:bg-surface-container-low border border-outline-variant">
+<span class="material-symbols-outlined">layers</span>
+</button>
+</div>
+<!-- Map Markers -->
+<!-- Marker 1 (Active/Selected) -->
+<div class="absolute top-1/2 left-1/3 transform -translate-x-1/2 -translate-y-1/2 z-30 map-marker cursor-pointer">
+<div class="relative">
+<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.3)] border-4 border-surface-container-lowest z-10 relative">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<!-- Ping Animation -->
+<div class="absolute inset-0 bg-primary rounded-full animate-ping opacity-75 -z-10"></div>
+</div>
+</div>
+<!-- Marker 2 (Empty) -->
+<div class="absolute top-1/4 right-1/4 transform -translate-x-1/2 -translate-y-1/2 z-20 map-marker cursor-pointer opacity-80">
+<div class="w-10 h-10 bg-tertiary-container rounded-full flex items-center justify-center shadow-sm border-2 border-surface-container-lowest">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px]" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+</div>
+<!-- Detailed Popup (Glassmorphism) -->
+<div class="absolute top-1/2 left-1/3 ml-8 -mt-24 z-40 w-72 backdrop-blur-md bg-surface-container-lowest/90 border border-outline-variant rounded-xl p-md shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1)]">
+<div class="flex justify-between items-start mb-sm border-b border-outline-variant pb-sm">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">TRK-9021</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Driver: J. Smith</p>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-sm mb-md">
+<div class="bg-surface-container-low p-sm rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant block mb-1">Status</span>
+<span class="text-[#137333] font-body-md font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Loaded
+                        </span>
+</div>
+<div class="bg-surface-container-low p-sm rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant block mb-1">Speed</span>
+<span class="text-on-surface font-data-mono font-semibold">68 mph</span>
+</div>
+<div class="bg-surface-container-low p-sm rounded-lg col-span-2">
+<span class="font-label-md text-label-md text-on-surface-variant block mb-1">Destination</span>
+<span class="text-on-surface font-body-md">Denver Distribution Center (ETA: 4h 12m)</span>
+</div>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 bg-primary text-on-primary py-xs rounded-lg font-label-md text-label-md hover:bg-primary-fixed-variant transition-colors">Details</button>
+<button class="flex-1 border border-outline-variant text-on-surface py-xs rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors">Message</button>
+</div>
+</div>
+<!-- Route Path (SVG Overlay Simulation) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10" preserveaspectratio="none">
+<path class="opacity-60" d="M 300,500 C 400,450 500,400 550,250" fill="none" stroke="#2563eb" stroke-dasharray="8 8" stroke-width="4"></path>
+</svg>
+</div>
+</main>
+</body></html>

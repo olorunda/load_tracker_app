@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Alert Configuration - FleetPro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "on-primary-container": "#eeefff",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#cfdaf2",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#6b6e70",
+                        "secondary": "#505f76",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-background": "#111c2d",
+                        "on-primary-fixed": "#00174b",
+                        "tertiary-fixed": "#e0e3e5",
+                        "on-secondary-fixed": "#0b1c30",
+                        "inverse-primary": "#b4c5ff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-container": "#54647a",
+                        "on-surface": "#111c2d",
+                        "surface": "#f9f9ff",
+                        "on-primary": "#ffffff",
+                        "primary": "#004ac6",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "tertiary": "#525657",
+                        "outline-variant": "#c3c6d7",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container": "#e7eeff",
+                        "surface-container-high": "#dee8ff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-variant": "#d8e3fb",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#263143",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "primary-container": "#2563eb",
+                        "surface-container-low": "#f0f3ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-tertiary-container": "#eff1f3",
+                        "secondary-container": "#d0e1fb",
+                        "outline": "#737686",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#0053db",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "display": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .filled-icon { font-variation-settings: 'FILL' 1; }
+        
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked { right: 0; border-color: #004ac6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #004ac6; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col w-[260px] h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant py-md px-sm z-40 transition-all duration-200 ease-in-out">
+<div class="flex items-center gap-sm px-sm mb-lg">
+<img alt="Fleet Logo" class="w-10 h-10 rounded-lg object-cover" data-alt="A minimalist and modern corporate logo for a fleet management enterprise, featuring clean geometric lines in dark blue and grey, set against a pristine white background. The logo conveys reliability and efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmfmqn_NUZyhH0eZvniFB6w2M24V5tzCEyX4btn5cukAdIOV5gbU7pQ-gW-UJw8a70knT4GK8SWhjqAI7TCXW1C375Ggf0D7v_6dbjvKATiFRavFqWlo98QOMwAKfM59pgKHxB9qF3P4Kjg9wrwXZpJd2cHwga_jlGlOI7NhgSIyWfoqoB-iowfGCj55I2J4pyDPpOzgG-vaAB2rJRVlIiQ2OPjMTS3YMuu634NjS0drZ09gICaMbE"/>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-black text-on-surface">FleetManager</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Enterprise Logistics</p>
+</div>
+</div>
+<ul class="flex flex-col gap-xs flex-1">
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+                    Live Assets
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-primary bg-secondary-container font-bold transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined filled-icon">notifications_active</span>
+                    Alerts
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">map</span>
+                    Geofences
+                </a>
+</li>
+</ul>
+<div class="mt-auto border-t border-outline-variant pt-sm flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                Support
+            </a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-[260px] flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 z-50 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex justify-between items-center px-lg">
+<div class="flex items-center gap-md">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<img alt="Manager Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a logistics manager, a middle-aged professional with a focused expression, wearing business casual attire. The background is a clean, softly lit modern office environment, emphasizing reliability and competence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhatFf-sRGW_SSz35DZBDZhvufYQ1XwLLkKhaiSacX-d43_IDPgVh6anxnVfMcvSNB_uxbhFO3F1fMMPLgFvLk1nWq2ewQQ8gJdILARBQTenUmUgH89EuCfTjMBUJmItXcDzY0hcieaDVlz1Zu2C_fmx9oZn0ygphNCIr0_TKq9K1trGpuBMzRvPTOCWba29ZPe9W4AD3s4Jn2O6VE6j8DJsB3ooMOllZYiIR_711uUDIxLpkQDJgZ"/>
+</div>
+</header>
+<!-- Main Scrollable Area -->
+<main class="flex-1 overflow-y-auto p-margin bg-background">
+<div class="max-w-6xl mx-auto space-y-lg">
+<!-- Page Header -->
+<div class="flex justify-between items-end pb-sm border-b border-outline-variant">
+<div>
+<h2 class="text-display font-display text-on-background">Alert Configuration</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant mt-1">Manage global and asset-specific notification triggers.</p>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-variant transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        New Alert Rule
+                    </button>
+</div>
+<!-- Alert Configuration Table Card -->
+<div class="bg-surface rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
+<div class="p-md bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-headline-md font-headline-md text-on-surface">Active Triggers</h3>
+<div class="flex gap-sm">
+<select class="bg-surface border border-outline-variant text-body-md font-body-md rounded-lg px-3 py-1.5 focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>All Assets</option>
+<option>Heavy Duty Fleet</option>
+<option>Light Delivery</option>
+</select>
+<select class="bg-surface border border-outline-variant text-body-md font-body-md rounded-lg px-3 py-1.5 focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>All Alert Types</option>
+<option>Load Status</option>
+<option>Geofence</option>
+<option>Maintenance</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="py-3 px-md text-label-md font-label-md text-on-surface-variant uppercase">Alert Name</th>
+<th class="py-3 px-md text-label-md font-label-md text-on-surface-variant uppercase">Trigger Type</th>
+<th class="py-3 px-md text-label-md font-label-md text-on-surface-variant uppercase">Target Asset(s)</th>
+<th class="py-3 px-md text-label-md font-label-md text-on-surface-variant uppercase">Notification Channels</th>
+<th class="py-3 px-md text-label-md font-label-md text-on-surface-variant uppercase text-right">Status</th>
+</tr>
+</thead>
+<tbody class="text-body-md font-body-md text-on-surface">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors">
+<td class="py-4 px-md">
+<div class="font-semibold">Unscheduled Unload</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">Alert when status changes to 'Empty' outside depot.</div>
+</td>
+<td class="py-4 px-md">
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-2 py-1 rounded text-label-md font-label-md">
+<span class="material-symbols-outlined text-[16px]">inventory_2</span>
+                                            Load Status
+                                        </span>
+</td>
+<td class="py-4 px-md">All Heavy Duty</td>
+<td class="py-4 px-md">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" title="Email">mail</span>
+<span class="material-symbols-outlined text-on-surface-variant" title="SMS">sms</span>
+</div>
+</td>
+<td class="py-4 px-md text-right">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 checked:right-0 checked:border-primary border-outline-variant" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle1"></label>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors bg-surface-container-lowest">
+<td class="py-4 px-md">
+<div class="font-semibold">HQ Depot Entry</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">Notify logistics desk upon arrival.</div>
+</td>
+<td class="py-4 px-md">
+<span class="inline-flex items-center gap-1 bg-secondary-fixed text-on-secondary-fixed px-2 py-1 rounded text-label-md font-label-md">
+<span class="material-symbols-outlined text-[16px]">share_location</span>
+                                            Geofence Entry
+                                        </span>
+</td>
+<td class="py-4 px-md">Fleet-wide</td>
+<td class="py-4 px-md">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-primary" title="In-App">notifications</span>
+</div>
+</td>
+<td class="py-4 px-md text-right">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 checked:right-0 checked:border-primary border-outline-variant" id="toggle2" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle2"></label>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors">
+<td class="py-4 px-md">
+<div class="font-semibold">Unauthorized Exit (Night)</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">Geofence exit between 10PM - 5AM.</div>
+</td>
+<td class="py-4 px-md">
+<span class="inline-flex items-center gap-1 bg-error-container text-on-error-container px-2 py-1 rounded text-label-md font-label-md">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                                            Geofence Exit
+                                        </span>
+</td>
+<td class="py-4 px-md">Truck TRK-084, TRK-092</td>
+<td class="py-4 px-md">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-error" title="Emergency SMS">sms</span>
+<span class="material-symbols-outlined text-error" title="Email">mail</span>
+</div>
+</td>
+<td class="py-4 px-md text-right">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 checked:right-0 checked:border-primary border-outline-variant" id="toggle3" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle3"></label>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
