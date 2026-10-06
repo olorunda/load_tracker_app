@@ -10,6 +10,7 @@
             name: '',
             category: '',
             status: 'Loaded',
+            base_voltage: '',
             driver_name: '',
             imei: '',
             hardware: 'Teltonika FMC130 (Codec 8 Extended)',
@@ -174,6 +175,11 @@
                         <div>
                             <label class="block text-label-md font-label-md text-on-surface mb-xs uppercase">Ping Interval (Seconds)</label>
                             <input type="number" x-model="form.ping_interval" placeholder="15" class="w-full px-md py-sm rounded-lg border border-outline-variant bg-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"/>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-label-md font-label-md text-on-surface mb-xs uppercase">IO 66 Baseline External Voltage (mV)</label>
+                            <input type="number" x-model="form.base_voltage" placeholder="e.g. 11520 (Initial resting voltage when empty - auto-calibrates from first ping if blank)" class="w-full px-md py-sm rounded-lg border border-outline-variant bg-surface text-body-md font-data-mono focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"/>
+                            <span class="text-[11px] text-on-surface-variant block mt-1">Teltonika IO 66 (External Voltage): Any increase from this base determines the truck is Loaded.</span>
                         </div>
                     </div>
                 </div>

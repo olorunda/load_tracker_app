@@ -105,6 +105,7 @@ class FleetTelemetryController extends Controller
             'code' => 'required|string|max:50',
             'category' => 'required|string|max:100',
             'status' => 'required|string|max:50',
+            'base_voltage' => 'nullable|integer',
             'driver_name' => 'nullable|string|max:255',
             'imei' => 'required|string|max:50',
         ]);
@@ -128,5 +129,34 @@ class FleetTelemetryController extends Controller
         $payload = $this->telemetryService->getExecutiveDashboardMetrics();
 
         return response()->json(array_merge(['success' => true], $payload));
+    }
+
+    /**
+     * Calibrate or set base voltage (IO 66) for a vehicle.
+     */
+    public function calibrateBaseVoltage(int $id, Request $request): JsonResponse
+    {
+        $vehicle = \App\Models\Vehicle::findOrFail($id);
+        $baseVoltage = $request->input('base_voltage');
+
+        if ($baseVoltage === null || $baseVoltage <= 0) {
+            $firstPos = \App\Models\GpsPosition::where('vehicle_id', $vehicle->id)
+                ->where('external_voltage', '>', 0)
+                ->orderBy('recorded_at', 'asc')
+                ->first();
+            $baseVoltage = $firstPos ? $firstPos->external_voltage : ($vehicle->current_voltage ?: 0);
+        }
+
+        $vehicle->base_voltage = (int)$baseVoltage;
+        if ($vehicle->current_voltage) {
+            $vehicle->status = ($vehicle->current_voltage > $vehicle->base_voltage) ? 'Loaded' : 'Empty';
+        }
+        $vehicle->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Base voltage set to {$vehicle->base_voltage} mV. Status is {$vehicle->status}.",
+            'vehicle' => $vehicle,
+        ]);
     }
 }

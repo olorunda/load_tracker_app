@@ -22,14 +22,27 @@ class TeltonikaDumpSeeder extends Seeder
      */
     public function run(): void
     {
-        $primaryDump = base_path('../teltonika_tcp/860848081275126.jsonl');
-        $allRecordsDump = base_path('../teltonika_tcp/all_records.jsonl');
+        $findDump = function(string $filename): ?string {
+            $paths = [
+                base_path('../teltonika_tcp/' . $filename),
+                base_path('teltonika_tcp/' . $filename),
+                '/var/www/html/teltonika_tcp/' . $filename,
+                '/var/www/html/fleet_tracker/teltonika_tcp/' . $filename,
+            ];
+            foreach ($paths as $p) {
+                if (file_exists($p)) return $p;
+            }
+            return null;
+        };
 
-        if (file_exists($primaryDump)) {
+        $primaryDump = $findDump('860848081275126.jsonl');
+        $allRecordsDump = $findDump('all_records.jsonl');
+
+        if ($primaryDump) {
             $this->importerService->fromFile($primaryDump)->import();
         }
 
-        if (file_exists($allRecordsDump)) {
+        if ($allRecordsDump) {
             $this->importerService->fromFile($allRecordsDump)->import();
         }
 

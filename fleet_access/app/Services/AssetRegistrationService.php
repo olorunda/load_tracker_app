@@ -33,6 +33,7 @@ class AssetRegistrationService
                 'code' => $code,
                 'category' => $this->payload['category'] ?? 'Heavy Duty Truck',
                 'status' => $this->payload['status'] ?? 'Loaded',
+                'base_voltage' => isset($this->payload['base_voltage']) ? (int)$this->payload['base_voltage'] : null,
                 'driver_name' => $this->payload['driver_name'] ?? 'Driver Assigned',
                 'last_ping_at' => now(),
             ]

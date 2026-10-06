@@ -76,18 +76,34 @@ class FleetTelemetryService
                 ? min(100, round(($pos->internal_battery_voltage / 4200) * 100)) . '%'
                 : 'N/A';
 
+            $extVolt = $pos ? $pos->external_voltage : ($vehicle->current_voltage ?? 0);
+            $baseVolt = $vehicle->base_voltage;
+            $voltDelta = ($baseVolt && $extVolt > 0) ? ($extVolt - $baseVolt) : 0;
+            $isLoaded = ($baseVolt && $extVolt > 0) ? ($extVolt > $baseVolt) : ($vehicle->status === 'Loaded');
+            $status = $isLoaded ? 'Loaded' : ($baseVolt ? 'Empty' : $vehicle->status);
+
             return [
                 'id' => $vehicle->code,
                 'db_id' => $vehicle->id,
                 'name' => $vehicle->name,
                 'driver' => $vehicle->driver_name ?? 'Unassigned',
-                'status' => $vehicle->status,
+                'status' => $status,
                 'category' => $vehicle->category,
                 'imei' => $vehicle->imei,
                 'speed' => $speed,
                 'speed_raw' => $pos ? $pos->speed_kmh : 0,
                 'battery_voltage' => $pos ? "{$pos->internal_battery_voltage} mV" : 'N/A',
                 'battery_pct' => $batteryPct,
+                'external_voltage' => $extVolt > 0 ? "{$extVolt} mV" : 'N/A',
+                'external_voltage_raw' => $extVolt,
+                'base_voltage' => $baseVolt ? "{$baseVolt} mV" : 'N/A',
+                'base_voltage_raw' => $baseVolt,
+                'voltage_delta' => $voltDelta,
+                'voltage_delta_formatted' => $voltDelta > 0 ? "+{$voltDelta} mV" : "{$voltDelta} mV",
+                'is_loaded' => $isLoaded,
+                'load_summary' => $baseVolt 
+                    ? ($isLoaded ? "Loaded (+{$voltDelta} mV above base)" : "Empty ({$extVolt} mV / base {$baseVolt} mV)")
+                    : ($extVolt > 0 ? "Base calibrated at {$extVolt} mV" : "Calibrating Base Voltage"),
                 'satellites' => $pos ? $pos->satellites : 0,
                 'hdop' => $pos ? ($pos->hdop / 10) : 0,
                 'ignition' => $pos ? $pos->ignition_state : false,
@@ -374,6 +390,7 @@ class FleetTelemetryService
     {
         $totalFleet = Vehicle::count();
         $activeLoads = Vehicle::where('status', 'Loaded')->count();
+        $emptyLoads = Vehicle::where('status', 'Empty')->count();
         $criticalAlertsCount = \App\Models\Alert::where('severity', 'critical')->where('is_resolved', false)->count() 
             + DtcFault::where('severity', 'critical')->where('status', 'active')->count();
 
@@ -446,6 +463,7 @@ class FleetTelemetryService
             'kpis' => [
                 'total_fleet' => number_format($totalFleet),
                 'active_loads' => number_format($activeLoads),
+                'empty_loads' => number_format($emptyLoads),
                 'critical_alerts' => $criticalAlertsCount,
                 'in_geofence_vehicles' => number_format($inGeofenceVehiclesCount),
                 'adherence_rate' => $adherenceRate . '%',

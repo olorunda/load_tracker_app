@@ -285,7 +285,7 @@
                         // Center on Lagos Teltonika GPS hub
                         this.map = L.map('geofence-map', { zoomControl: false }).setView([6.5802, 3.2932], 12);
 
-                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4c3e_1_e8878c7b595a5fe459c526a1', {
                             maxZoom: 19,
                             attribution: '&copy; OpenStreetMap &copy; CARTO'
                         }).addTo(this.map);

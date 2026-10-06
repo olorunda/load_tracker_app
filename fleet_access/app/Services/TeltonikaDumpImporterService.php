@@ -117,12 +117,25 @@ class TeltonikaDumpImporterService
                 GpsPosition::insert($chunk->toArray());
             });
 
-            // Update Vehicle last_ping_at timestamp
+            // Update Vehicle last_ping_at, base_voltage, current_voltage, and load status
             $vehiclesCache->each(function (Vehicle $vehicle) {
-                $latestAt = GpsPosition::where('vehicle_id', $vehicle->id)->max('recorded_at');
-                if ($latestAt) {
-                    $vehicle->update(['last_ping_at' => $latestAt]);
+                $latestPos = GpsPosition::where('vehicle_id', $vehicle->id)->orderBy('recorded_at', 'desc')->first();
+                $firstNonZeroPos = GpsPosition::where('vehicle_id', $vehicle->id)->where('external_voltage', '>', 0)->orderBy('recorded_at', 'asc')->first();
+
+                $baseVolt = $vehicle->base_voltage ?: ($firstNonZeroPos ? $firstNonZeroPos->external_voltage : null);
+                $currentVolt = $latestPos ? $latestPos->external_voltage : null;
+
+                $status = $vehicle->status;
+                if ($baseVolt && $currentVolt) {
+                    $status = ($currentVolt > $baseVolt) ? 'Loaded' : 'Empty';
                 }
+
+                $vehicle->update([
+                    'last_ping_at' => $latestPos ? $latestPos->recorded_at : $vehicle->last_ping_at,
+                    'base_voltage' => $baseVolt,
+                    'current_voltage' => $currentVolt,
+                    'status' => $status,
+                ]);
             });
         }
 

@@ -18,6 +18,7 @@
                 <div class="flex border-b border-outline-variant/60 gap-md text-label-md font-label-md">
                     <button @click="setFilter('all')" :class="activeFilter === 'all' ? 'border-b-2 border-primary text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'" class="pb-xs transition-colors">All</button>
                     <button @click="setFilter('loaded')" :class="activeFilter === 'loaded' ? 'border-b-2 border-primary text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'" class="pb-xs transition-colors">Loaded</button>
+                    <button @click="setFilter('empty')" :class="activeFilter === 'empty' ? 'border-b-2 border-primary text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'" class="pb-xs transition-colors">Empty</button>
                     <button @click="setFilter('alert')" :class="activeFilter === 'alert' ? 'border-b-2 border-primary text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'" class="pb-xs transition-colors">Alerts</button>
                 </div>
             </div>
@@ -146,6 +147,35 @@
                     <div class="p-xs bg-surface rounded-lg border border-outline-variant/60">
                         <span class="text-[10px] uppercase text-on-surface-variant block">Motion</span>
                         <span class="font-data-mono font-bold text-primary text-body-sm" x-text="selectedAsset?.movement ? 'Moving' : 'Stopped'"></span>
+                    </div>
+                </div>
+
+                <!-- Teltonika IO 66 Load Determination Telemetry -->
+                <div class="mb-sm p-sm bg-surface-container-low rounded-lg border border-outline-variant/60">
+                    <div class="flex items-center justify-between mb-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[16px] text-primary">scale</span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wider text-on-surface">Teltonika Load Telemetry (IO 66)</span>
+                        </div>
+                        <span :class="selectedAsset?.is_loaded ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-surface-variant text-on-surface-variant'" class="px-2 py-0.5 rounded-full font-label-md text-[10px] uppercase font-bold" x-text="selectedAsset?.is_loaded ? 'LOADED' : 'EMPTY'"></span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-xs text-center">
+                        <div class="p-xs bg-surface rounded border border-outline-variant/40">
+                            <span class="text-[9px] uppercase text-on-surface-variant block">Base Volt</span>
+                            <span class="font-data-mono font-bold text-on-surface text-[12px]" x-text="selectedAsset?.base_voltage || 'N/A'"></span>
+                        </div>
+                        <div class="p-xs bg-surface rounded border border-outline-variant/40">
+                            <span class="text-[9px] uppercase text-on-surface-variant block">Current Volt</span>
+                            <span class="font-data-mono font-bold text-primary text-[12px]" x-text="selectedAsset?.external_voltage || 'N/A'"></span>
+                        </div>
+                        <div class="p-xs bg-surface rounded border border-outline-variant/40">
+                            <span class="text-[9px] uppercase text-on-surface-variant block">Delta</span>
+                            <span class="font-data-mono font-bold text-[12px]" :class="selectedAsset?.voltage_delta > 0 ? 'text-primary' : 'text-on-surface-variant'" x-text="selectedAsset?.voltage_delta_formatted || '0 mV'"></span>
+                        </div>
+                    </div>
+                    <div class="mt-xs text-[10px] text-on-surface-variant flex items-center justify-between">
+                        <span x-text="selectedAsset?.load_summary"></span>
+                        <span class="text-[9px] italic text-outline" x-text="selectedAsset?.is_loaded ? 'Δ > 0 mV (Loaded)' : 'Δ ≤ 0 mV (Empty)'"></span>
                     </div>
                 </div>
 
@@ -438,7 +468,7 @@
                         // Center default on Nigeria Teltonika coordinates from dump (lat ~ 6.5802, lng ~ 3.2932)
                         this.map = L.map('live-tracking-map', { zoomControl: false }).setView([6.5802, 3.2932], 13);
 
-                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4c3e_1_e8878c7b595a5fe459c526a1', {
                             maxZoom: 19,
                             attribution: '&copy; OpenStreetMap &copy; CARTO'
                         }).addTo(this.map);

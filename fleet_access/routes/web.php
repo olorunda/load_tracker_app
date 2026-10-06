@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/fleet/diagnostics/run', [\App\Http\Controllers\FleetTelemetryController::class, 'runDiagnostics'])->name('api.fleet.diagnostics.run');
     Route::get('/api/fleet/dtc-faults', [\App\Http\Controllers\FleetTelemetryController::class, 'dtcFaults'])->name('api.fleet.dtc.index');
     Route::post('/api/fleet/dtc-faults/{id}/resolve', [\App\Http\Controllers\FleetTelemetryController::class, 'resolveFault'])->name('api.fleet.dtc.resolve');
+    Route::post('/api/fleet/assets/{id}/calibrate-base-voltage', [\App\Http\Controllers\FleetTelemetryController::class, 'calibrateBaseVoltage'])->name('api.fleet.calibrate-base-voltage');
     Route::get('/api/fleet/dashboard-metrics', [\App\Http\Controllers\FleetTelemetryController::class, 'dashboardMetrics'])->name('api.fleet.dashboard');
 
     Route::get('/api/geofences', [\App\Http\Controllers\GeofenceController::class, 'index'])->name('api.geofences.index');

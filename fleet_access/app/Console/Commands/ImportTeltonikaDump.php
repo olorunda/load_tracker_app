@@ -26,10 +26,24 @@ class ImportTeltonikaDump extends Command
      */
     public function handle(TeltonikaDumpImporterService $importerService): int
     {
-        $filePath = $this->argument('file') ?? base_path('../teltonika_tcp/860848081275126.jsonl');
+        $filePath = $this->argument('file');
+        if (!$filePath) {
+            $candidates = [
+                base_path('../teltonika_tcp/860848081275126.jsonl'),
+                base_path('teltonika_tcp/860848081275126.jsonl'),
+                '/var/www/html/teltonika_tcp/860848081275126.jsonl',
+                '/var/www/html/fleet_tracker/teltonika_tcp/860848081275126.jsonl',
+            ];
+            foreach ($candidates as $cand) {
+                if (file_exists($cand)) {
+                    $filePath = $cand;
+                    break;
+                }
+            }
+        }
 
-        if (!file_exists($filePath)) {
-            $this->error("Dump file not found at: {$filePath}");
+        if (!$filePath || !file_exists($filePath)) {
+            $this->error("Dump file not found at: " . ($filePath ?? 'default search paths'));
             return Command::FAILURE;
         }
 

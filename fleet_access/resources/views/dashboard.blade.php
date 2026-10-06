@@ -37,10 +37,10 @@
                     <span class="font-label-md text-label-md">Active Loads</span>
                     <span class="material-symbols-outlined text-[#059669]">inventory_2</span>
                 </div>
-                <div class="font-headline-lg text-headline-lg text-on-surface" x-text="kpis.active_loads">2</div>
+                <div class="font-headline-lg text-headline-lg text-on-surface" x-text="kpis.active_loads + ' Loaded'">2 Loaded</div>
                 <div class="flex items-center gap-xs font-body-sm text-body-sm">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-[#059669]/10 text-[#059669] font-label-md text-label-md">Optimal</span>
-                    <span class="text-on-surface-variant">100% utilization</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-[#059669]/10 text-[#059669] font-label-md text-label-md">IO 66 Telemetry</span>
+                    <span class="text-on-surface-variant" x-text="(kpis.empty_loads || 0) + ' Empty'"></span>
                 </div>
             </div>
 
@@ -299,7 +299,7 @@
                     if (typeof L === 'undefined') return;
                     this.map = L.map('dashboard-map', { zoomControl: false }).setView([6.5802, 3.2932], 13);
                     
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4c3e_1_e8878c7b595a5fe459c526a1', {
                         maxZoom: 19,
                         attribution: '&copy; OpenStreetMap &copy; CARTO'
                     }).addTo(this.map);
