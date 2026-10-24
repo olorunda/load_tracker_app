@@ -17,6 +17,7 @@ class Vehicle extends Model
         'category',
         'status',
         'base_voltage',
+        'load_increase_percentage',
         'current_voltage',
         'driver_name',
         'imei',
@@ -26,12 +27,14 @@ class Vehicle extends Model
     protected $casts = [
         'last_ping_at' => 'datetime',
         'base_voltage' => 'integer',
+        'load_increase_percentage' => 'float',
         'current_voltage' => 'integer',
     ];
 
     /**
-     * Determine if vehicle is loaded based on IO 66 (External Voltage) vs Base Voltage.
-     * Any increase from the base voltage means the truck is loaded.
+     * Determine if vehicle is loaded based on IO 66 (External Voltage) vs Base Voltage and % increase threshold.
+     * If % increase is 0 or unset, any increase from base voltage triggers Loaded status.
+     * If % increase > 0, voltage must exceed base_voltage * (1 + (percentage / 100)).
      */
     public function isLoaded(?int $voltage = null): bool
     {
@@ -40,7 +43,39 @@ class Vehicle extends Model
             return $this->status === 'Loaded';
         }
 
-        return $v > $this->base_voltage;
+        $thresholdVoltage = $this->getLoadThresholdVoltage();
+
+        return $v > $thresholdVoltage;
+    }
+
+    /**
+     * Get the minimum voltage required to trigger Loaded status.
+     */
+    public function getLoadThresholdVoltage(): ?int
+    {
+        if ($this->base_voltage === null || $this->base_voltage <= 0) {
+            return null;
+        }
+
+        $pct = (float)($this->load_increase_percentage ?? 0.0);
+        if ($pct <= 0) {
+            return $this->base_voltage;
+        }
+
+        return (int)round($this->base_voltage * (1 + ($pct / 100.0)));
+    }
+
+    /**
+     * Get the percentage difference between current voltage and base voltage.
+     */
+    public function getVoltageIncreasePercentage(?int $voltage = null): float
+    {
+        $v = $voltage ?? $this->current_voltage;
+        if ($this->base_voltage === null || $this->base_voltage <= 0 || $v === null || $v <= 0) {
+            return 0.0;
+        }
+
+        return round((($v - $this->base_voltage) / $this->base_voltage) * 100, 2);
     }
 
     /**
@@ -53,7 +88,7 @@ class Vehicle extends Model
         }
 
         $this->current_voltage = $voltage;
-        $this->status = ($voltage > $this->base_voltage) ? 'Loaded' : 'Empty';
+        $this->status = $this->isLoaded($voltage) ? 'Loaded' : 'Empty';
         $this->save();
 
         return $this->status;
@@ -72,6 +107,6 @@ class Vehicle extends Model
      */
     public function latestPosition(): HasOne
     {
-        return $this->hasOne(GpsPosition::class)->latestOfMany('recorded_at');
+        return $this->hasOne(GpsPosition::class)->latestOfMany('id');
     }
 }

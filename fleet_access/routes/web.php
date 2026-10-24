@@ -32,6 +32,10 @@ Route::middleware(['auth'])->group(function () {
         return view('alerts');
     })->name('alerts');
 
+    Route::get('/trips', function () {
+        return view('trips');
+    })->name('trips');
+
     // Telemetry & Geofence API routes
     Route::get('/api/fleet/assets', [\App\Http\Controllers\FleetTelemetryController::class, 'assets'])->name('api.fleet.assets');
     Route::post('/api/fleet/assets/register', [\App\Http\Controllers\FleetTelemetryController::class, 'registerAsset'])->name('api.fleet.register');
@@ -47,7 +51,18 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/geofences', [\App\Http\Controllers\GeofenceController::class, 'store'])->name('api.geofences.store');
     Route::post('/api/geofences/{id}/toggle', [\App\Http\Controllers\GeofenceController::class, 'toggle'])->name('api.geofences.toggle');
     Route::post('/api/geofences/evaluate', [\App\Http\Controllers\GeofenceController::class, 'evaluate'])->name('api.geofences.evaluate');
-    Route::get('/api/alerts', [\App\Http\Controllers\GeofenceController::class, 'alerts'])->name('api.alerts.index');
+    Route::get('/api/trips', [\App\Http\Controllers\TripController::class, 'index'])->name('api.trips.index');
+    Route::get('/api/trips/{id}', [\App\Http\Controllers\TripController::class, 'show'])->name('api.trips.show');
+    Route::get('/api/fleet/assets/{id}/load-events', [\App\Http\Controllers\TripController::class, 'vehicleLoadEvents'])->name('api.fleet.load-events');
+
+    Route::get('/api/alerts', [\App\Http\Controllers\AlertRuleController::class, 'alerts'])->name('api.alerts.index');
+    Route::post('/api/alerts/{id}/resolve', [\App\Http\Controllers\AlertRuleController::class, 'resolve'])->name('api.alerts.resolve');
+    Route::post('/api/alerts/resolve-all', [\App\Http\Controllers\AlertRuleController::class, 'resolveAll'])->name('api.alerts.resolve-all');
+
+    Route::get('/api/alert-rules', [\App\Http\Controllers\AlertRuleController::class, 'index'])->name('api.alert-rules.index');
+    Route::post('/api/alert-rules', [\App\Http\Controllers\AlertRuleController::class, 'store'])->name('api.alert-rules.store');
+    Route::post('/api/alert-rules/{id}/toggle', [\App\Http\Controllers\AlertRuleController::class, 'toggle'])->name('api.alert-rules.toggle');
+    Route::delete('/api/alert-rules/{id}', [\App\Http\Controllers\AlertRuleController::class, 'destroy'])->name('api.alert-rules.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

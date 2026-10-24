@@ -105,7 +105,8 @@ class FleetTelemetryController extends Controller
             'code' => 'required|string|max:50',
             'category' => 'required|string|max:100',
             'status' => 'required|string|max:50',
-            'base_voltage' => 'nullable|integer',
+            'base_voltage' => 'nullable|integer|min:0',
+            'load_increase_percentage' => 'nullable|numeric|min:0|max:1000',
             'driver_name' => 'nullable|string|max:255',
             'imei' => 'required|string|max:50',
         ]);
@@ -132,10 +133,15 @@ class FleetTelemetryController extends Controller
     }
 
     /**
-     * Calibrate or set base voltage (IO 66) for a vehicle.
+     * Calibrate or set base voltage (IO 66) and % increase threshold for a vehicle.
      */
     public function calibrateBaseVoltage(int $id, Request $request): JsonResponse
     {
+        $request->validate([
+            'base_voltage' => 'nullable|integer|min:0',
+            'load_increase_percentage' => 'nullable|numeric|min:0|max:1000',
+        ]);
+
         $vehicle = \App\Models\Vehicle::findOrFail($id);
         $baseVoltage = $request->input('base_voltage');
 
@@ -148,14 +154,19 @@ class FleetTelemetryController extends Controller
         }
 
         $vehicle->base_voltage = (int)$baseVoltage;
+
+        if ($request->has('load_increase_percentage')) {
+            $vehicle->load_increase_percentage = (float)$request->input('load_increase_percentage');
+        }
+
         if ($vehicle->current_voltage) {
-            $vehicle->status = ($vehicle->current_voltage > $vehicle->base_voltage) ? 'Loaded' : 'Empty';
+            $vehicle->status = $vehicle->isLoaded() ? 'Loaded' : 'Empty';
         }
         $vehicle->save();
 
         return response()->json([
             'success' => true,
-            'message' => "Base voltage set to {$vehicle->base_voltage} mV. Status is {$vehicle->status}.",
+            'message' => "Base voltage set to {$vehicle->base_voltage} mV with {$vehicle->load_increase_percentage}% threshold. Status is {$vehicle->status}.",
             'vehicle' => $vehicle,
         ]);
     }

@@ -11,6 +11,7 @@
             category: '',
             status: 'Loaded',
             base_voltage: '',
+            load_increase_percentage: 0,
             driver_name: '',
             imei: '',
             hardware: 'Teltonika FMC130 (Codec 8 Extended)',
@@ -55,6 +56,8 @@
             this.form.category = '';
             this.form.driver_name = '';
             this.form.imei = '';
+            this.form.base_voltage = '';
+            this.form.load_increase_percentage = 0;
         }
     }">
         <div class="max-w-4xl mx-auto space-y-lg">
@@ -176,10 +179,41 @@
                             <label class="block text-label-md font-label-md text-on-surface mb-xs uppercase">Ping Interval (Seconds)</label>
                             <input type="number" x-model="form.ping_interval" placeholder="15" class="w-full px-md py-sm rounded-lg border border-outline-variant bg-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"/>
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-label-md font-label-md text-on-surface mb-xs uppercase">IO 66 Baseline External Voltage (mV)</label>
-                            <input type="number" x-model="form.base_voltage" placeholder="e.g. 11520 (Initial resting voltage when empty - auto-calibrates from first ping if blank)" class="w-full px-md py-sm rounded-lg border border-outline-variant bg-surface text-body-md font-data-mono focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"/>
-                            <span class="text-[11px] text-on-surface-variant block mt-1">Teltonika IO 66 (External Voltage): Any increase from this base determines the truck is Loaded.</span>
+                        <!-- Teltonika IO 66 Load Determination Calibration -->
+                        <div class="md:col-span-2 p-md bg-surface-container-low rounded-xl border border-primary/20 space-y-sm">
+                            <div class="flex items-center gap-2 mb-xs">
+                                <span class="material-symbols-outlined text-[20px] text-primary">scale</span>
+                                <div>
+                                    <h4 class="font-headline-sm text-headline-sm text-on-surface">Teltonika Load Calibration (IO 66 Telemetry)</h4>
+                                    <p class="text-[12px] text-on-surface-variant">Configure baseline resting voltage and required percentage increase to determine when truck is Loaded.</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-md pt-xs">
+                                <div>
+                                    <label class="block text-label-md font-label-md text-on-surface mb-xs uppercase">Baseline External Voltage (mV)</label>
+                                    <input type="number" x-model="form.base_voltage" placeholder="e.g. 11520 (Leave blank to auto-calibrate on 1st ping)" class="w-full px-md py-sm rounded-lg border border-outline-variant bg-surface text-body-md font-data-mono focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"/>
+                                    <span class="text-[11px] text-on-surface-variant block mt-1">Initial resting voltage when empty (mV). Auto-calibrated from first device ping if blank.</span>
+                                </div>
+                                <div>
+                                    <label class="block text-label-md font-label-md text-on-surface mb-xs uppercase">Load Trigger % Increase</label>
+                                    <input type="number" step="0.1" min="0" x-model="form.load_increase_percentage" placeholder="0 (Any increase > base)" class="w-full px-md py-sm rounded-lg border border-outline-variant bg-surface text-body-md font-data-mono focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"/>
+                                    <span class="text-[11px] text-on-surface-variant block mt-1">Percentage increase required to mark Loaded. <strong>0% = any increase</strong>, <strong>5% = 5% over base</strong>.</span>
+                                </div>
+                            </div>
+
+                            <!-- Live formula pill -->
+                            <div class="p-xs px-sm bg-surface rounded-lg border border-outline-variant/60 flex items-center justify-between text-[11px]">
+                                <div class="flex items-center gap-1.5 text-on-surface">
+                                    <span class="material-symbols-outlined text-[15px] text-primary">calculate</span>
+                                    <span>Status Rule: 
+                                        <strong>Loaded</strong> when Voltage &gt; 
+                                        <span class="font-data-mono font-bold text-primary" x-text="form.base_voltage ? Math.round(Number(form.base_voltage) * (1 + (Number(form.load_increase_percentage || 0)/100))) + ' mV' : (form.load_increase_percentage > 0 ? '(Base + ' + form.load_increase_percentage + '%)' : 'Base Voltage')"></span>
+                                        <span class="text-on-surface-variant" x-show="form.base_voltage && Number(form.load_increase_percentage || 0) > 0" x-text="' (+' + (Math.round(Number(form.base_voltage) * (1 + (Number(form.load_increase_percentage || 0)/100))) - Number(form.base_voltage)) + ' mV delta)'"></span>
+                                    </span>
+                                </div>
+                                <span class="text-on-surface-variant italic" x-text="!form.base_voltage ? 'Auto-learns base on 1st ping' : 'Fixed base configured'"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -239,6 +273,18 @@
                 <p class="font-body-md text-body-md text-on-surface-variant max-w-[500px] mx-auto leading-relaxed">
                     <strong class="text-on-surface" x-text="registeredVehicle?.code"></strong> (<span x-text="registeredVehicle?.name"></span>) with IMEI <span class="font-data-mono font-bold text-primary" x-text="registeredVehicle?.imei"></span> is now registered and receiving telematics streams.
                 </p>
+
+                <div class="grid grid-cols-2 gap-sm text-left max-w-[440px] mx-auto p-sm bg-surface-container-low rounded-lg border border-outline-variant/60 text-[12px]">
+                    <div>
+                        <span class="text-[10px] uppercase text-on-surface-variant block">Base Voltage</span>
+                        <span class="font-data-mono font-bold text-on-surface" x-text="registeredVehicle?.base_voltage ? registeredVehicle.base_voltage + ' mV' : 'Auto-calibrating'"></span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase text-on-surface-variant block">Load Trigger Threshold</span>
+                        <span class="font-data-mono font-bold text-primary" x-text="'+' + (registeredVehicle?.load_increase_percentage || 0) + '% increase'"></span>
+                    </div>
+                </div>
+
                 <div class="flex justify-center gap-sm pt-sm">
                     <a href="{{ route('live-tracking') }}" class="px-5 py-2.5 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-colors">View on Live Asset Map</a>
                     <button @click="resetForm()" class="px-5 py-2.5 bg-surface-container-high border border-outline-variant text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-highest transition-colors">Add Another Asset</button>

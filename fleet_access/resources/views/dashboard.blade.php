@@ -299,10 +299,7 @@
                     if (typeof L === 'undefined') return;
                     this.map = L.map('dashboard-map', { zoomControl: false }).setView([6.5802, 3.2932], 13);
                     
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4c3e_1_e8878c7b595a5fe459c526a1', {
-                        maxZoom: 19,
-                        attribution: '&copy; OpenStreetMap &copy; CARTO'
-                    }).addTo(this.map);
+                    window.addBaseLayers(this.map, { position: 'topright' });
 
                     L.control.zoom({ position: 'topright' }).addTo(this.map);
 

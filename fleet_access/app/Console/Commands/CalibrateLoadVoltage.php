@@ -15,14 +15,15 @@ class CalibrateLoadVoltage extends Command
      */
     protected $signature = 'fleet:calibrate-load-voltage 
                             {--imei= : Specific vehicle IMEI to calibrate} 
-                            {--base-voltage= : Force specific base voltage in mV}';
+                            {--base-voltage= : Force specific base voltage in mV}
+                            {--percentage= : Force load increase threshold percentage (e.g. 5.0 for 5%)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Calibrates vehicle base voltage (IO 66) and updates loaded/empty status based on voltage increase.';
+    protected $description = 'Calibrates vehicle base voltage (IO 66) and % increase threshold, updating loaded/empty status.';
 
     /**
      * Execute the console command.
@@ -46,6 +47,7 @@ class CalibrateLoadVoltage extends Command
 
         foreach ($vehicles as $vehicle) {
             $forcedBase = $this->option('base-voltage');
+            $forcedPct = $this->option('percentage');
 
             // Find earliest non-zero external voltage (initial resting voltage)
             $firstPos = GpsPosition::where('vehicle_id', $vehicle->id)
@@ -65,17 +67,21 @@ class CalibrateLoadVoltage extends Command
             // Determine base voltage
             $baseVolt = $forcedBase ? (int)$forcedBase : ($vehicle->base_voltage ?: ($minVolt ?: ($firstPos ? $firstPos->external_voltage : null)));
             $currentVolt = $latestPos ? $latestPos->external_voltage : ($vehicle->current_voltage ?: null);
+            $loadPct = $forcedPct !== null ? (float)$forcedPct : (float)($vehicle->load_increase_percentage ?? 0.0);
 
             $status = $vehicle->status;
             $delta = 0;
+            $increasePct = 0.0;
             if ($baseVolt !== null && $currentVolt !== null && $baseVolt > 0) {
                 $delta = $currentVolt - $baseVolt;
-                // Any increase from the base means the truck is loaded
-                $status = ($currentVolt > $baseVolt) ? 'Loaded' : 'Empty';
+                $increasePct = round((($currentVolt - $baseVolt) / $baseVolt) * 100, 2);
+                $minLoadedVolt = (int)round($baseVolt * (1 + ($loadPct / 100.0)));
+                $status = ($currentVolt > $minLoadedVolt) ? 'Loaded' : 'Empty';
             }
 
             $vehicle->update([
                 'base_voltage' => $baseVolt,
+                'load_increase_percentage' => $loadPct,
                 'current_voltage' => $currentVolt,
                 'status' => $status,
                 'last_ping_at' => $latestPos ? $latestPos->recorded_at : $vehicle->last_ping_at,
@@ -85,15 +91,17 @@ class CalibrateLoadVoltage extends Command
                 'ID' => $vehicle->code,
                 'Vehicle Name' => $vehicle->name,
                 'IMEI' => $vehicle->imei,
-                'Base Volt (Empty)' => $baseVolt ? "{$baseVolt} mV" : 'N/A',
-                'Current Volt (IO 66)' => $currentVolt ? "{$currentVolt} mV" : 'N/A',
+                'Base Volt' => $baseVolt ? "{$baseVolt} mV" : 'N/A',
+                'Current Volt' => $currentVolt ? "{$currentVolt} mV" : 'N/A',
                 'Delta' => ($delta > 0 ? "+{$delta}" : "{$delta}") . ' mV',
+                'Change %' => ($increasePct > 0 ? "+{$increasePct}%" : "{$increasePct}%"),
+                'Threshold %' => "+{$loadPct}%",
                 'Calculated Status' => $status,
             ];
         }
 
         $this->table(
-            ['ID', 'Vehicle Name', 'IMEI', 'Base Volt (Empty)', 'Current Volt (IO 66)', 'Delta', 'Calculated Status'],
+            ['ID', 'Vehicle Name', 'IMEI', 'Base Volt', 'Current Volt', 'Delta', 'Change %', 'Threshold %', 'Calculated Status'],
             $rows
         );
 

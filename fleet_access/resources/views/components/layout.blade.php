@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <title>{{ $title ?? 'FleetManager - Enterprise Fleet & Asset Tracking' }}</title>
     
     <!-- Fonts -->
@@ -11,17 +12,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
+    <script>
+        try { if (localStorage.getItem('fleet.navCollapsed') === '1') document.documentElement.dataset.nav = 'collapsed'; } catch (e) {}
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col md:flex-row font-body-md text-body-md" x-data="{ mobileMenuOpen: false }">
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col md:flex-row font-body-md text-body-md" x-data="{
+          mobileMenuOpen: false,
+          navCollapsed: document.documentElement.dataset.nav === 'collapsed',
+          toggleNav() {
+              this.navCollapsed = !this.navCollapsed;
+              document.documentElement.dataset.nav = this.navCollapsed ? 'collapsed' : 'expanded';
+              try { localStorage.setItem('fleet.navCollapsed', this.navCollapsed ? '1' : '0'); } catch (e) {}
+              setTimeout(() => window.dispatchEvent(new Event('resize')), 220);
+          }
+      }">
     
     <!-- Desktop SideNavBar -->
-    <nav class="hidden md:flex w-[260px] h-screen fixed left-0 top-0 flex-col py-md px-sm bg-surface-container-low border-r border-outline-variant z-40">
-        <div class="mb-xl px-sm flex items-center gap-sm">
+    <nav class="app-sidenav hidden md:flex h-screen fixed left-0 top-0 flex-col py-md px-sm bg-surface-container-low border-r border-outline-variant z-40">
+        <div class="nav-brand mb-xl px-sm flex items-center gap-sm">
             <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm shrink-0">
                 <span class="material-symbols-outlined text-[24px]" data-weight="fill">local_shipping</span>
             </div>
-            <div>
+            <div class="nav-label">
                 <h1 class="text-headline-sm font-headline-sm font-black text-on-surface leading-tight">FleetManager</h1>
                 <p class="text-label-md font-label-md text-on-surface-variant">Enterprise Logistics</p>
             </div>
@@ -29,51 +42,57 @@
 
         <ul class="flex flex-col gap-xs flex-grow">
             <li>
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('dashboard') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                <a title="Dashboard" href="{{ route('dashboard') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('dashboard') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
                     <span class="material-symbols-outlined" {{ request()->routeIs('dashboard') ? 'data-weight=fill' : '' }}>dashboard</span>
-                    <span class="font-label-md text-label-md">Dashboard</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('live-tracking') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('live-tracking') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                <a title="Live Assets" href="{{ route('live-tracking') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('live-tracking') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
                     <span class="material-symbols-outlined" {{ request()->routeIs('live-tracking') ? 'data-weight=fill' : '' }}>local_shipping</span>
-                    <span class="font-label-md text-label-md">Live Assets</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Live Assets</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('precision-system') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('precision-system') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                <a title="Precision System" href="{{ route('precision-system') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('precision-system') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
                     <span class="material-symbols-outlined" {{ request()->routeIs('precision-system') ? 'data-weight=fill' : '' }}>precision_manufacturing</span>
-                    <span class="font-label-md text-label-md">Precision System</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Precision System</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('assets.add') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('assets.add') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                <a title="Asset Mapping" href="{{ route('assets.add') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('assets.add') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
                     <span class="material-symbols-outlined" {{ request()->routeIs('assets.add') ? 'data-weight=fill' : '' }}>add_location_alt</span>
-                    <span class="font-label-md text-label-md">Asset Mapping</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Asset Mapping</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('geofences') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('geofences') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                <a title="Trips &amp; Loads" href="{{ route('trips') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('trips') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                    <span class="material-symbols-outlined" {{ request()->routeIs('trips') ? 'data-weight=fill' : '' }}>route</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Trips &amp; Loads</span>
+                </a>
+            </li>
+            <li>
+                <a title="Geofences" href="{{ route('geofences') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('geofences') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
                     <span class="material-symbols-outlined" {{ request()->routeIs('geofences') ? 'data-weight=fill' : '' }}>map</span>
-                    <span class="font-label-md text-label-md">Geofences</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Geofences</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('alerts') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('alerts') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
+                <a title="Alert Rules" href="{{ route('alerts') }}" class="flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200 ease-in-out {{ request()->routeIs('alerts') ? 'text-primary bg-secondary-container font-bold shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high' }}">
                     <span class="material-symbols-outlined" {{ request()->routeIs('alerts') ? 'data-weight=fill' : '' }}>notifications_active</span>
-                    <span class="font-label-md text-label-md">Alert Rules</span>
+                    <span class="nav-label font-label-md text-label-md whitespace-nowrap">Alert Rules</span>
                 </a>
             </li>
         </ul>
 
         <div class="mt-auto pt-lg border-t border-outline-variant/30 flex flex-col gap-xs">
-            <a href="#" class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out">
+            <a title="Settings" href="#" class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out">
                 <span class="material-symbols-outlined">settings</span>
-                <span class="font-label-md text-label-md">Settings</span>
+                <span class="nav-label font-label-md text-label-md whitespace-nowrap">Settings</span>
             </a>
-            <a href="#" class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out">
+            <a title="Support" href="#" class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out">
                 <span class="material-symbols-outlined">contact_support</span>
-                <span class="font-label-md text-label-md">Support</span>
+                <span class="nav-label font-label-md text-label-md whitespace-nowrap">Support</span>
             </a>
         </div>
     </nav>
@@ -121,6 +140,11 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('trips') }}" class="flex items-center gap-md px-md py-sm rounded-lg {{ request()->routeIs('trips') ? 'text-primary bg-secondary-container font-bold' : 'text-on-surface-variant' }}">
+                    <span class="material-symbols-outlined">route</span> Trips &amp; Loads
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('geofences') }}" class="flex items-center gap-md px-md py-sm rounded-lg {{ request()->routeIs('geofences') ? 'text-primary bg-secondary-container font-bold' : 'text-on-surface-variant' }}">
                     <span class="material-symbols-outlined">map</span> Geofences
                 </a>
@@ -134,12 +158,16 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col md:ml-[260px] min-h-screen">
+    <div class="app-main flex-1 flex flex-col min-h-screen min-w-0">
         <!-- Header -->
         <header class="w-full h-16 sticky top-0 z-30 bg-surface-container-lowest border-b border-outline-variant shadow-xs flex justify-between items-center px-lg">
             <div class="flex items-center gap-md">
                 <button @click="mobileMenuOpen = true" class="md:hidden p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg">
                     <span class="material-symbols-outlined">menu</span>
+                </button>
+                <button type="button" @click="toggleNav()" class="hidden md:inline-flex p-2 -ml-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg"
+                        :title="navCollapsed ? 'Expand menu' : 'Collapse menu'" :aria-expanded="(!navCollapsed).toString()" aria-label="Toggle side menu">
+                    <span class="material-symbols-outlined" x-text="navCollapsed ? 'left_panel_open' : 'left_panel_close'">left_panel_close</span>
                 </button>
                 <div class="hidden md:flex items-center gap-md">
                     <div class="relative w-64 group">

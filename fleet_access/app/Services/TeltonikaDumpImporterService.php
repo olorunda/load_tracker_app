@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ProcessVehicleAnalyticsJob;
 use App\Models\GpsPosition;
 use App\Models\Vehicle;
 use Illuminate\Support\Carbon;
@@ -125,9 +126,12 @@ class TeltonikaDumpImporterService
                 $baseVolt = $vehicle->base_voltage ?: ($firstNonZeroPos ? $firstNonZeroPos->external_voltage : null);
                 $currentVolt = $latestPos ? $latestPos->external_voltage : null;
 
-                $status = $vehicle->status;
+                $vehicle->base_voltage = $baseVolt;
+                $vehicle->current_voltage = $currentVolt;
                 if ($baseVolt && $currentVolt) {
-                    $status = ($currentVolt > $baseVolt) ? 'Loaded' : 'Empty';
+                    $status = $vehicle->isLoaded($currentVolt) ? 'Loaded' : 'Empty';
+                } else {
+                    $status = $vehicle->status;
                 }
 
                 $vehicle->update([
@@ -136,6 +140,8 @@ class TeltonikaDumpImporterService
                     'current_voltage' => $currentVolt,
                     'status' => $status,
                 ]);
+
+                ProcessVehicleAnalyticsJob::dispatch($vehicle->id);
             });
         }
 

@@ -78,8 +78,15 @@ class FleetTelemetryService
 
             $extVolt = $pos ? $pos->external_voltage : ($vehicle->current_voltage ?? 0);
             $baseVolt = $vehicle->base_voltage;
+            $loadIncreasePct = (float)($vehicle->load_increase_percentage ?? 0.0);
+            $minLoadedVolt = $baseVolt ? (int)round($baseVolt * (1 + ($loadIncreasePct / 100.0))) : null;
             $voltDelta = ($baseVolt && $extVolt > 0) ? ($extVolt - $baseVolt) : 0;
-            $isLoaded = ($baseVolt && $extVolt > 0) ? ($extVolt > $baseVolt) : ($vehicle->status === 'Loaded');
+            $currentIncreasePct = ($baseVolt && $baseVolt > 0 && $extVolt > 0)
+                ? round((($extVolt - $baseVolt) / $baseVolt) * 100, 2)
+                : 0.0;
+            $isLoaded = ($baseVolt && $extVolt > 0)
+                ? ($extVolt > ($minLoadedVolt ?? $baseVolt))
+                : ($vehicle->status === 'Loaded');
             $status = $isLoaded ? 'Loaded' : ($baseVolt ? 'Empty' : $vehicle->status);
 
             return [
@@ -92,17 +99,29 @@ class FleetTelemetryService
                 'imei' => $vehicle->imei,
                 'speed' => $speed,
                 'speed_raw' => $pos ? $pos->speed_kmh : 0,
+                'heading' => $pos ? $pos->angle_deg : 0,
                 'battery_voltage' => $pos ? "{$pos->internal_battery_voltage} mV" : 'N/A',
                 'battery_pct' => $batteryPct,
                 'external_voltage' => $extVolt > 0 ? "{$extVolt} mV" : 'N/A',
                 'external_voltage_raw' => $extVolt,
                 'base_voltage' => $baseVolt ? "{$baseVolt} mV" : 'N/A',
                 'base_voltage_raw' => $baseVolt,
+                'load_increase_percentage' => $loadIncreasePct,
+                'load_threshold_voltage' => $minLoadedVolt ? "{$minLoadedVolt} mV" : 'N/A',
+                'load_threshold_voltage_raw' => $minLoadedVolt,
                 'voltage_delta' => $voltDelta,
                 'voltage_delta_formatted' => $voltDelta > 0 ? "+{$voltDelta} mV" : "{$voltDelta} mV",
+                'voltage_increase_pct' => $currentIncreasePct,
+                'voltage_increase_pct_formatted' => $currentIncreasePct > 0 ? "+{$currentIncreasePct}%" : "{$currentIncreasePct}%",
                 'is_loaded' => $isLoaded,
                 'load_summary' => $baseVolt 
-                    ? ($isLoaded ? "Loaded (+{$voltDelta} mV above base)" : "Empty ({$extVolt} mV / base {$baseVolt} mV)")
+                    ? ($isLoaded 
+                        ? ($loadIncreasePct > 0 
+                            ? "Loaded (+{$currentIncreasePct}% / +{$voltDelta} mV, target >+{$loadIncreasePct}%)"
+                            : "Loaded (+{$voltDelta} mV above base)")
+                        : ($loadIncreasePct > 0 
+                            ? "Empty ({$currentIncreasePct}% / +{$voltDelta} mV, required >+{$loadIncreasePct}%)"
+                            : "Empty ({$extVolt} mV / base {$baseVolt} mV)"))
                     : ($extVolt > 0 ? "Base calibrated at {$extVolt} mV" : "Calibrating Base Voltage"),
                 'satellites' => $pos ? $pos->satellites : 0,
                 'hdop' => $pos ? ($pos->hdop / 10) : 0,
@@ -145,7 +164,7 @@ class FleetTelemetryService
                 'battery_mv' => $pos->internal_battery_voltage,
                 'ignition' => $pos->ignition_state,
                 'movement' => $pos->movement_state,
-                'recorded_at' => $pos->recorded_at->format('H:i:s UTC'),
+                'recorded_at' => $pos->recorded_at->format('H:i:s') . ' UTC',
                 'iso' => $pos->recorded_at->toIso8601String(),
             ];
         })->values()->toArray();
@@ -413,8 +432,12 @@ class FleetTelemetryService
                     'vehicle_code' => $alert->vehicle ? $alert->vehicle->code : 'TRK-SYS',
                     'vehicle_name' => $alert->vehicle ? $alert->vehicle->name : 'Fleet Vehicle',
                     'severity' => $alert->severity,
-                    'type' => 'Geofence',
-                    'icon' => $alert->type === 'overspeed' ? 'speed' : 'share_location',
+                    'type' => str_contains($alert->type, 'unauthorized') ? 'Load' : 'Geofence',
+                    'icon' => match (true) {
+                        $alert->type === 'overspeed' => 'speed',
+                        str_contains($alert->type, 'unauthorized') => 'inventory_2',
+                        default => 'share_location',
+                    },
                     'time_ago' => $alert->triggered_at ? $alert->triggered_at->diffForHumans() : 'Recently',
                 ];
             });

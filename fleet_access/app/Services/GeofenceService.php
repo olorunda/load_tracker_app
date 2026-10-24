@@ -162,6 +162,70 @@ class GeofenceService
             }
         }
 
+        // 3. Evaluate Configured Notification Rules
+        try {
+            $activeRules = \App\Models\AlertRule::where('is_active', true)->get();
+            foreach ($activeRules as $rule) {
+                $type = strtolower($rule->type);
+
+                // Overspeed rule evaluation
+                if ((str_contains($type, 'speed') || $type === 'overspeed') && $rule->threshold_value > 0) {
+                    if ($latestPos->speed_kmh > $rule->threshold_value) {
+                        $alertsCreated[] = Alert::firstOrCreate(
+                            [
+                                'vehicle_id' => $vehicle->id,
+                                'type' => 'overspeed',
+                                'triggered_at' => $latestPos->recorded_at,
+                            ],
+                            [
+                                'severity' => $rule->severity,
+                                'title' => "{$rule->name} ({$vehicle->code})",
+                                'description' => "{$vehicle->name} exceeded speed threshold: {$latestPos->speed_kmh} km/h (Limit: {$rule->threshold_value} km/h).",
+                            ]
+                        );
+                    }
+                }
+
+                // Power / Voltage rule evaluation
+                if (str_contains($type, 'volt') || str_contains($type, 'power')) {
+                    if ($latestPos->external_voltage === 0) {
+                        $alertsCreated[] = Alert::firstOrCreate(
+                            [
+                                'vehicle_id' => $vehicle->id,
+                                'type' => 'power_disconnect',
+                                'triggered_at' => $latestPos->recorded_at,
+                            ],
+                            [
+                                'severity' => 'critical',
+                                'title' => "External Power Disconnect ({$vehicle->code})",
+                                'description' => "{$vehicle->name} main power harness disconnected (0 mV external voltage).",
+                            ]
+                        );
+                    }
+                }
+
+                // Load status rule evaluation (e.g. Unscheduled Unload / Empty Transit)
+                if (str_contains($type, 'load')) {
+                    if ($vehicle->status === 'Empty' && $latestPos->speed_kmh > 20) {
+                        $alertsCreated[] = Alert::firstOrCreate(
+                            [
+                                'vehicle_id' => $vehicle->id,
+                                'type' => 'unscheduled_unload',
+                                'triggered_at' => $latestPos->recorded_at,
+                            ],
+                            [
+                                'severity' => $rule->severity,
+                                'title' => "{$rule->name} ({$vehicle->code})",
+                                'description' => "{$vehicle->name} operating in Empty status while in motion ({$latestPos->speed_kmh} km/h).",
+                            ]
+                        );
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ignore rule evaluation errors
+        }
+
         return $alertsCreated;
     }
 
